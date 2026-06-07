@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nike Pegasus Elite — Built to Fly</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Invisible scroll driver — 800vh tall -->
+  <div id="scroll-driver"></div>
+
+  <!-- Fixed canvas -->
+  <canvas id="canvas"></canvas>
+
+  <!-- Text overlays -->
+  <div id="ui">
+    <div class="room-text" id="text-0">
+      <span class="eyebrow">Nike Pegasus Elite</span>
+      <h1>BUILT<br>TO FLY.</h1>
+    </div>
+    <div class="room-text" id="text-1">
+      <span class="eyebrow">ZoomX Foam Technology</span>
+      <h1>EVERY STEP,<br>AMPLIFIED.</h1>
+    </div>
+    <div class="room-text" id="text-2">
+      <span class="eyebrow">Carbon Fiber Plate</span>
+      <h1>FORWARD FORCE,<br>ALWAYS.</h1>
+    </div>
+    <div class="room-text" id="text-3">
+      <span class="eyebrow">Flyknit Upper</span>
+      <h1>LIGHT<br>AS AIR.</h1>
+    </div>
+    <div class="room-text" id="text-4">
+      <span class="eyebrow">Nike Pegasus Elite</span>
+      <h1>YOUR FASTEST<br>SELF.</h1>
+      <a href="#" class="cta-btn" id="cta-btn">Shop Now →</a>
+    </div>
+  </div>
+
+  <!-- Progress dots -->
+  <nav id="progress-dots" aria-label="Section progress">
+    <button class="dot active" data-room="0" aria-label="Intro"></button>
+    <button class="dot" data-room="1" aria-label="Cushioning"></button>
+    <button class="dot" data-room="2" aria-label="Speed"></button>
+    <button class="dot" data-room="3" aria-label="Breathability"></button>
+    <button class="dot" data-room="4" aria-label="Finale"></button>
+  </nav>
+
+  <!-- Loading screen -->
+  <div id="loading">
+    <div class="loading-inner">
+      <svg class="swoosh-icon" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 50 C30 10 90 5 115 15 C85 20 40 38 10 55 Z" fill="#ff5a00"/>
+      </svg>
+      <div class="loading-label">LOADING</div>
+      <div class="loading-track"><div class="loading-fill" id="loading-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- GSAP (UMD globals, loaded before module) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- Three.js importmap -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
