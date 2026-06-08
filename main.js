@@ -843,6 +843,14 @@ const ctaBtn  = document.getElementById('cta-btn');
 let activeRoom = 0;
 const bgColor  = new THREE.Color(0x000000);
 
+// Mouse parallax — spring-lerped camera offset
+const mouse = { x: 0, y: 0 };
+const camOffset = { x: 0, y: 0 };
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth  - 0.5) * 2;
+  mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
 ScrollTrigger.create({
   trigger: document.body,
   start: 'top top', end: 'bottom bottom',
@@ -872,21 +880,39 @@ function onScroll(t) {
   renderer.setClearColor(bgColor);
   scene.fog.color.copy(bgColor);
 
+  // CSS class-based text state — Emil Kowalski approach
+  // Transitions are defined in CSS with custom easing; JS only sets classes
   for (let i = 0; i < ZONES.length; i++) {
-    const z = ZONES[i];
-    let op = 0;
-    if (t >= z.start && t <= z.end) {
-      const local = (t - z.start) / (z.end - z.start);
-      op = local < 0.25 ? local / 0.25 : local < 0.72 ? 1 : (1 - local) / 0.28;
+    const z     = ZONES[i];
+    const el    = textEls[i];
+    const inZone = t >= z.start && t <= z.end;
+    const local  = inZone ? (t - z.start) / (z.end - z.start) : -1;
+    const peak   = inZone && local >= 0.15 && local <= 0.85;
+
+    if (peak) {
+      if (!el.classList.contains('is-visible')) {
+        el.classList.remove('is-exiting');
+        el.classList.add('is-visible');
+      }
+    } else if (inZone && local > 0.85) {
+      if (!el.classList.contains('is-exiting')) {
+        el.classList.remove('is-visible');
+        el.classList.add('is-exiting');
+      }
+    } else {
+      el.classList.remove('is-visible', 'is-exiting');
     }
-    textEls[i].style.opacity   = op;
-    textEls[i].style.transform = `translateY(${(1 - op) * 16}px)`;
   }
 
-  const ctaA = t > 0.87 ? Math.min((t - 0.87) / 0.09, 1) : 0;
-  ctaBtn.style.opacity       = ctaA;
-  ctaBtn.style.pointerEvents = ctaA > 0 ? 'auto' : 'none';
+  // CTA button — enters at 87% scroll
+  const ctaVisible = t > 0.87;
+  if (ctaVisible) {
+    ctaBtn.classList.add('is-visible');
+  } else {
+    ctaBtn.classList.remove('is-visible');
+  }
 
+  // Progress dots
   let newRoom = 0;
   for (let i = 0; i < ZONES.length; i++) {
     if (t >= (ZONES[i].start + ZONES[i].end) * 0.5 - 0.04) newRoom = i;
@@ -907,6 +933,13 @@ function animate() {
   requestAnimationFrame(animate);
   const dt   = clock.getDelta();
   const time = clock.elapsedTime;
+
+  // Mouse parallax — spring lerp toward cursor, 6% stiffness per frame
+  const lerpK = 1 - Math.pow(0.06, dt);
+  camOffset.x += (mouse.x * 0.22 - camOffset.x) * lerpK;
+  camOffset.y += (-mouse.y * 0.12 - camOffset.y) * lerpK;
+  camera.position.x += camOffset.x;
+  camera.position.y += camOffset.y;
 
   // Room 0 — slowly spin shoe, pulse rings
   const r0shoe = rooms[0].children.find(c => c.userData.spinMe);
